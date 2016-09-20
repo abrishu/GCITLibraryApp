@@ -10,6 +10,13 @@
     border: none;
 }
 
+.shrink{
+-webkit-transform:scale(0.5);
+-moz-transform:scale(0.5);
+-ms-transform:scale(0.5);
+transform:scale(0.5);
+}
+
 .center_div{
     margin: 0 auto;
     width:70% /* value of your choice which suits your alignment */
@@ -43,8 +50,10 @@
  
 <div class="panel panel-default">
 		<div class="panel-heading">List of Books</div>
-		<table id="tblLibraryBranch" class="table">
+		<div class="" id="tbl">
+			<table id="tblLibraryBranch" class="table">
 		</table>
+		</div>
 </div>
 
 

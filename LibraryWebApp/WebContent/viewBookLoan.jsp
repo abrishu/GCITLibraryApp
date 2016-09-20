@@ -109,6 +109,7 @@ function getCheckedOutBooks(){
         datatype:"json"
 	}).done(function(checkedOutBooks){
 		window.checkedOutList=checkedOutBooks;
+		loadBookCopiesData($('#searchStringBranch').val(),$('#searchStringBook').val(),window.currentPageNumber);
 	});
 }
 
@@ -262,11 +263,13 @@ $('#cardNumber').change(function(){
 		
 		/*on change AJAX call to load pagination info and authors*/
 		$('#searchStringBranch').change(function(){
+			getCheckedOutBooks();
 			loadBookCopiesData($(this).val(),$('#searchStringBook').val(),1);
 			loadPaginationData($(this).val(),$('#searchStringBook').val());
 		});
 		
 		$('#searchStringBook').change(function(){
+			getCheckedOutBooks();
 			loadBookCopiesData($('#searchStringBranch').val(),$(this).val(),1);
 			loadPaginationData($('#searchStringBranch').val(),$(this).val());
 		});
@@ -277,7 +280,7 @@ $('#cardNumber').change(function(){
 				{
 					$(this).removeData();
 					getCheckedOutBooks();
-					loadBookCopiesData($('#searchStringBranch').val(),$('#searchStringBook').val(),window.currentPageNumber);
+					
 				}) ;
 	});
 </script>
