@@ -1,0 +1,157 @@
+<div ng-controller="bookController">
+<div ng-show="message.success==true">
+		<div class="alert alert-success" ng-show="showSuccessAlert" >
+		 <strong>{{message.message}}</strong>
+         <button type="button" class="close" data-ng-click="switchBool('showSuccessAlert')">×</button> 
+        </div>
+</div>
+<div ng-show="message.success==false">
+		<div class="alert alert-danger" ng-show="showSuccessAlert" >
+		 <strong>{{message.message}}</strong>
+         <button type="button" class="close" data-ng-click="switchBool('showSuccessAlert')">×</button> 
+        </div>
+</div>
+<div class="input-group">
+	<div class="alertDiv"></div>
+	 	 <input type="text" class="form-control" ng-change="onChangeBook()" ng-model="searchString" aria-describedby="basic-addon1">
+ 	 	<br/><br/>
+ 	 <button type="button" ng-click="showAddBook()" class="btn btn-success btn-sm">Add Book</button>
+</div>
+<nav aria-label="Page navigation">
+  <ul id="paginationList" class="pagination" >
+	 <li  ng-repeat= "n in getNumber(number) track by $index"><a ng-click=goToPage($index+1,searchString);highlight($index)>{{$index+1}}</a></li>
+  </ul>
+</nav> 
+ 
+<div class="panel panel-default">
+		<div class="panel-heading">List of Books</div>
+		
+			<table id="tblAuthor" class="table">
+			<thead>
+			<tr>
+				<th>Book Id</th>
+				<th>Book Title</th>
+				<th>Book Publisher</th>
+				<th>Book Authors</th>
+				<th>Book Genres</th>
+				<th>Edit</th>
+				<th>Delete</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="b in booksList">
+					<td>{{$index+1}}</td>
+					<td>{{b.title}}</td>
+					<td>{{b.publisher.name}}</td>
+					<td>
+						<table>
+							<tr ng-repeat="a in b.authorList">
+							<td>{{a.name}}</td>	
+						</table>
+					</td>
+					<td>
+						<table>
+							<tr ng-repeat="g in b.genresList">
+							<td>{{g.name}}</td>	
+						</table>
+					</td>
+					<td><button type="button" ng-click="showEditBook(b.id)" data-toggle="modal" class="btn btn-success btn-sm btnEdit">Edit</button></td>
+					<td><button type="button" ng-click="showDeleteBook(b.id)" data-toggle="modal" data-toggle="modal" data-target="#deleteModal" class="btn btn-danger btn-sm">Delete</button></td>
+			</tbody>
+		</table>
+</div>
+
+<div modal="addBookModal" id="addModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="closeAddBook()">&times;</button>
+        <h4 class="modal-title">Add Book</h4>
+      </div>
+      <div class="modal-body">
+       	<input type="text" value="{{author.name}}"  placeholder="Enter Book Name" ng-model="newName"  id="newName" class="form-control" name="newName"><br/>
+     	<label>Select the author</label>
+     	<div style="border:1px solid #ccc"> <multiple-autocomplete  ng-model="selAuthorList" after-select-item="afterSelectItem" object-property="name" suggestions-arr="authorList">
+     	</multiple-autocomplete></div>
+     	<br/>
+     	<label>Select the Publisher</label><br/>
+     	<div style="border:1px solid #ccc"><select ng-model="selPubList"  class="form-control" >
+			<option ng-repeat="x in pubList" value="{{x.id}}">{{x.name}}</option>
+		</select></div>
+		<br/>
+     	<label>Select the genre</label>
+     	<div style="border:1px solid #ccc"><multiple-autocomplete ng-model="selGenresList" object-property="name" suggestions-arr="genresList"></multiple-autocomplete></div>     	
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnUpdateAuthor" ng-click="addBook()" class="btn btn-default" >Update</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="closeEditAuthor()">Close</button><br/>
+        <span style="float:left;visibility:hidden" class="label label-success"></span>
+         <span style="float:left;visibility:hidden" class="label label-danger"></span>
+      </div>
+    </div>
+  	
+  </div>
+</div>
+
+
+<div modal="editBookModal" id="editModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="closeEditBook()">&times;</button>
+        <h4 class="modal-title">Update Author</h4>
+      </div>
+      <div class="modal-body">
+       	<input type="text" value="{{book.title}}" ng-model="book.title"  id="newTitle" 
+       	class="form-control" name="newTitle"><br/>
+     	<label>Select the author</label>
+     	<div style="border:1px solid #ccc"> 
+     	<multiple-autocomplete class="ng-pristine ng-untouched ng-valid ng-isolate-scope"  ng-model="book.authorList" 
+     	object-property="name" suggestions-arr="authorList">
+     	</multiple-autocomplete></div>
+<!--      	<select multiple class="form-control"  ng-model="book.authorList"  -->
+<!--      		ng-options="author.name for author in authorList track by author.id "> -->
+<!--    		 </select> -->
+<!--    		 <pre>{{book.authorList || json}}</pre> -->
+<!--      	<pre>{{authorList || json}}</pre> -->
+     	<br/>
+     	<label>Select the Publisher</label>
+     	<div style="border:1px solid #ccc">
+     	<select 
+     	class="form-control" ng-model="book.publisher.id" ng-options="pub.id as pub.name for pub in pubList"> </select>
+     	</div><br/>
+     	<label>Select the genre</label>
+     	<div style="border:1px solid #ccc"><multiple-autocomplete ng-model="book.genresList" object-property="name" suggestions-arr="genresList"></multiple-autocomplete></div>     	
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnUpdateAuthor" ng-click="updateBook()" class="btn btn-default" >Update</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="closeEditBook()">Close</button><br/>
+        <span style="float:left;visibility:hidden" class="label label-success"></span>
+         <span style="float:left;visibility:hidden" class="label label-danger"></span>
+      </div>
+    </div>
+  	
+  </div>
+</div>
+
+<div modal="deleteBookModal" class="modal fade" role="dialog">
+  	 <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="closeDeleteBook()">&times;</button>
+        <h4 class="modal-title">Are you sure you want to delete "{{book.title}}" ?</h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnDeleteAuthor" ng-click="deleteBook()" class="btn btn-default" >Delete</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="closeDeleteBook()">Close</button><br/>
+        <span style="float:left;visibility:hidden" class="label label-success"></span>
+         <span style="float:left;visibility:hidden" class="label label-danger"></span>
+      </div>
+    </div>
+  	
+  </div>
+</div>
+
+</div>
+
+

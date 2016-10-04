@@ -1,0 +1,47 @@
+
+<div ng-controller="authorCtrl">
+
+<h3>List of Authors</h3>
+Search by Author name :<input type=" text" ng-model="globalsearch.authorName"><br>
+<div class="row">
+	<div class="col-md-6">
+		<table class="table" id="authorsTable">
+			<thead>
+				<tr>
+					<th>Author ID</th>
+					<th>Author Name</th>
+					<th>Edit Author</th>
+					<th>Delete Author</th>
+				</tr>
+			</thead>
+			<tbody>
+<!-- 				<tr ng-repeat="a in authors | filter:globalsearch"> -->
+					<tr dir-paginate="a in authors | filter:globalsearch|itemsPerPage:5">  
+					<td >{{a.authorId }}</td>
+					<td >{{a.authorName}}</td>
+					<td ><button class="btn btn btn-primary" ng-click="showEditAuthor(a.authorId)">Edit</button></td>
+					<td><button class="btn btn-danger" ng-click="deleteAuthor(a.authorId)">Delete</button></td>
+						
+				</tr>
+			</tbody>
+		</table>
+		<dir-pagination-controls
+       max-size="5"
+       direction-links="true"
+       boundary-links="true" >
+    </dir-pagination-controls>
+		
+<div modal="myModal1" class="modal fade" tabindex="-1" role="dialog"
+	aria-labelledby="myLargeModalLabel">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" width="200" height="200">
+Enter Author Name: <input type="text" ng-model="author.authorName" required><br>
+<button class="btn btn btn-primary"  ng-click="editAuthor(author)">Edit Author </button>	<br>
+<button class="btn btn btn-primary" ng-click="closeEdit()">Cancel</button>		
+		</div>
+		
+	</div>
+</div>
+</div>
+</div>
+</div>

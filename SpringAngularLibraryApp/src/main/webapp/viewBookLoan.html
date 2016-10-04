@@ -1,0 +1,161 @@
+<div ng-controller="loadingController">
+<div ng-controller="bookloanController" id="mainBody">
+
+	<style>
+.table-borderless tbody tr td, .table-borderless tbody tr th,
+	.table-borderless thead tr th {
+	border: none;
+}
+.center_div {
+	margin: 0 auto;
+	width: 70% /* value of your choice which suits your alignment */
+}
+</style>
+
+<div ng-show="loading" id="mydiv">
+	<img src="./resources/js/lib/ajax-loader.gif" class="ajax-loader"></script>
+</div>
+	<div ng-if="message.success">
+		<div class="alert alert-success" ng-show="showSuccessAlert">
+			<strong>{{message.message}}</strong>
+			<button type="button" class="close"
+				data-ng-click="switchBool('showSuccessAlert')">×</button>
+		</div>
+	</div>
+	<div ng-if="message.success==false">
+		<div class="alert alert-danger" ng-show="showSuccessAlert">
+			<strong>{{message.message}}</strong>
+			<button type="button" class="close"
+				data-ng-click="switchBool('showSuccessAlert')">×</button>
+		</div>
+	</div>
+	<input type="text" style="width: 400px;" class="form-control"
+		placeholder="Please enter your Card Number" ng-model="cardNumber"
+		ng-change="validateBorrower()" id="cardNumber" name="cardNumber">
+	<br /> <br />
+	<div ng-show="checkValidity()" class="alert alert-info">
+		Howdy  <strong>{{validBorrower.name}}</strong> |||Welcome to GCIT Library System.
+	</div>
+	<div ng-show="!checkValidity() && validBorrower.cardNo" class="alert alert-danger">
+		Sorry, <strong>The entered card number is not valid. Please enter again</strong>
+	</div>
+
+<div ng-show="validBorrower.cardNo && cardNumber!=''" >
+	<div class="container center_div" ">
+		<div class="input-group">
+			<input type="text" style="width: 400px;" class="form-control"
+				placeholder="Branch Name" ng-model="searchStringBranch" ng-change="onChangeSearch()"
+				> <span class="input-group-addon"></span>
+			<input type="text" style="width: 400px;" class="form-control"
+				placeholder="Book Name"  ng-model="searchStringBook" ng-change="onChangeSearch()"
+				>
+		</div>
+	</div>
+	<button type="button"
+					ng-click="showBorrowerInfoModal()" id="btnEdit" class="btn btn-success btn-sm btnEdit "> Update My Info
+					</button>
+		<nav aria-label="Page navigation">
+		  <ul id="paginationList" class="pagination" >
+			 <li  ng-repeat= "n in getNumber(number) track by $index"><a ng-click=goToPage($index);highlight($index)>{{$index+1}}</a></li>
+		  </ul>
+		</nav> 
+
+	<div class="panel panel-default">
+		<div class="panel-heading">List of Books</div>
+			<table id="tblBookLoan" class="table">
+			<thead>
+			<tr>
+				<th>id</th>
+				<th>Branch Name</th>
+				<th>Branch Address</th>
+				<th>Book Name</th>
+				<th>Number of Copies</th>
+				<th>Edit</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="bookcopy in bookCopiesList">
+					<td>{{$index + 1}}</td>
+					<td>{{bookcopy.branch.name}}</td>
+					<td>{{bookcopy.branch.address}}</td>
+					<td>{{bookcopy.book.title}}</td>
+					<td>{{bookcopy.noOfCopies}}</td>
+					<td>
+					<button ng-if="!checkOutReturn(bookcopy)" type="button" value="checkOutReturn()" 
+					ng-click="showModal(bookcopy,'checkout')" id="btnEdit" class="btn btn-success btn-sm btnEdit ">Check Out
+					</button>
+					<button ng-if="checkOutReturn(bookcopy)" type="button" value="checkOutReturn()" 
+					ng-click="showModal(bookcopy,'return')" id="btnEdit" class="btn btn-danger btn-sm btnEdit "> Return
+					</button>
+					</td>
+			</tbody>
+		</table>
+</div>
+</div>
+
+	<div modal="bookLoanModal" id="bookLoanModal" class="modal fade"
+		role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" ng-click="closeModal()">&times;</button>
+					<h4 class="modal-title">BOOK - {{type | uppercase}}</h4>
+				</div>
+				<div class="modal-body">
+					Branch Name:<br /> <input type="text" readOnly value=bookcopy.branch.name
+						ng-model="bookcopy.branch.name" class="form-control" name="branchName"><br />
+					Book <input type="text" readOnly value=bookcopy.book.title ng-model="bookcopy.book.title"
+						class="form-control" name="bookName"><br /> 
+					Address <input
+						type="text" readOnly value=bookcopy.branch.address ng-model="bookcopy.branch.address"
+						class="form-control" name="address"><br />
+				    No of Copies <input
+						type="text" readonly value=bookcopy.noOfCopies ng-model="bookcopy.noOfCopies"
+						class="form-control" name="noOfCopies"><br />
+				</div>
+				<div class="modal-footer">
+					<button ng-if="isReturn()" type="button" id="btnReturn"
+						ng-click="performReturn(bookcopy)" class="btn btn-danger btn-sm btnEdit">Return</button>
+					<button ng-if="!isReturn()"  type="button" id="btnCheckout"
+						ng-click="performCheckout(bookcopy)" class="btn btn-success btn-sm btnEdit">Check-out</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						ng-click="closeModal()">Close</button>
+					<br />
+				</div>
+			</div>
+
+		</div>
+	</div>
+	
+	
+	<div modal="borrowerInfoModal" id="borrowerInfoModal" class="modal fade"
+		role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" ng-click="closeBookInfoModal()">&times;</button>
+					<h4 class="modal-title">BOOK - {{type | uppercase}}</h4>
+				</div>
+				<div class="modal-body">
+					Borrower Name:<br /> <input type="text"  value=validBorrower.name
+						ng-model="validBorrower.name" class="form-control" name="branchName"><br />
+					Address <input
+						type="text"  value=validBorrower.address ng-model="validBorrower.address"
+						class="form-control" name="address"><br />
+				   Phone <input type="text"  value=validBorrower.phone ng-model="validBorrower.phone"
+						class="form-control" name="bookName"><br /> 
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="btnCheckout"
+						ng-click="updateBorrowerInfo()" class="btn btn-success btn-sm btnEdit">Update</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						ng-click="closeBookInfoModal()">Close</button>
+					<br />
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+</div>

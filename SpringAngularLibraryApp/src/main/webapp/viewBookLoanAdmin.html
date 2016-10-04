@@ -1,0 +1,124 @@
+<div ng-controller="loadingController">
+	<div ng-controller="bookloanAdminController" id="mainBody">
+		<style>
+.table-borderless tbody tr td, .table-borderless tbody tr th,
+	.table-borderless thead tr th {
+	border: none;
+}
+.md-datepicker-calendar-pane{
+z-index: 1200
+}
+.center_div {
+	margin: 0 auto;
+	width: 70% /* value of your choice which suits your alignment */
+}
+</style>
+
+		<div ng-show="loading" id="mydiv">
+			<img src="./resources/js/lib/ajax-loader.gif" class="ajax-loader">
+			</script>
+		</div>
+		<div ng-if="message.success">
+			<div class="alert alert-success" ng-show="showSuccessAlert">
+				<strong>{{message.message}}</strong>
+				<button type="button" class="close"
+					data-ng-click="switchBool('showSuccessAlert')">×</button>
+			</div>
+		</div>
+		<div ng-if="message.success==false">
+			<div class="alert alert-danger" ng-show="showSuccessAlert">
+				<strong>{{message.message}}</strong>
+				<button type="button" class="close"
+					data-ng-click="switchBool('showSuccessAlert')">×</button>
+			</div>
+		</div>
+		<div class="container center_div"">
+			<div class="input-group">
+				<input type="text" style="width: 400px;" class="form-control"
+					placeholder="Enter Search Filter" ng-model="searchStringBorrower"
+					ng-change="onChangeSearch()">
+			</div>
+		</div>
+
+		<nav aria-label="Page navigation">
+			<ul id="paginationList" class="pagination">
+				<li ng-repeat="n in getNumber(number) track by $index"><a
+					ng-click=goToPage($index);highlight($index)>{{$index+1}}</a></li>
+			</ul>
+		</nav>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">List of Book Loans</div>
+			<dir-pagination-controls
+			       max-size="5"
+			       direction-links="true"
+			       boundary-links="true" >
+   			 </dir-pagination-controls>
+			<table id="tblBookLoan" class="table">
+				<thead>
+					<tr>
+						<th>Card Number</th>
+						<th>Borrower Name</th>
+						<th>Branch Name</th>
+						<th>Book Title</th>
+						<th>Date Out</th>
+						<th>Due Date</th>
+						<th>Date in</th>
+						<th>Override</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr dir-paginate="bookLoan in bookLoanList | filter:searchStringBorrower|itemsPerPage:10">
+						<td>{{bookLoan.bor.cardNo}}</td>
+						<td>{{bookLoan.bor.name}}</td>
+						<td>{{bookLoan.branch.name}}</td>
+						<td>{{bookLoan.book.title}}</td>
+						<td>{{bookLoan.dateOut}}</td>
+						<td>{{bookLoan.dueDate}}</td>
+						<td>{{bookLoan.dateIn}}</td>
+						<td>
+							<button type="button" value="Override"
+								ng-click="showModal(bookLoan)" id="btnEdit"
+								class="btn btn-success btn-sm btnEdit ">Override</button>
+						</td>
+				</tbody>
+			</table>
+			<dir-pagination-controls
+			       max-size="5"
+			       direction-links="true"
+			       boundary-links="true" >
+   			 </dir-pagination-controls>
+		</div>
+
+		<div modal="bookLoanModal" id="bookLoanModal" class="modal fade"
+			role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" ng-click="closeModal()">&times;</button>
+						<h4 class="modal-title">Override Due Date</h4>
+					</div>
+					<div class="modal-body">
+						<label>Enter the due-date to override</label>
+						<div layout-gt-xs="row">
+							<div flex-gt-xs>
+								<md-datepicker ng-model="myDate"  md-placeholder="Enter date"
+								 is-open="$parent.opened"	md-min-date="minDate" md-max-date="maxDate"></md-datepicker>
+							</div>
+						</div>
+						<div class="modal-footer">
+							
+							<button  type="button" id="btnCheckout"
+								ng-click="overrideLoan()"
+								class="btn btn-success btn-sm btnEdit">Override</button>
+							<button type="button" class="btn btn-default"
+								data-dismiss="modal" ng-click="closeModal()">Close</button>
+							<br />
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>

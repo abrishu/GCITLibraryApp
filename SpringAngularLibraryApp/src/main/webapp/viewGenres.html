@@ -1,0 +1,152 @@
+<div ng-controller="genreController">
+<div ng-show="message.success==true">
+		<div class="alert alert-success" ng-show="showSuccessAlert" >
+		 <strong>{{message.message}}</strong>
+         <button type="button" class="close" data-ng-click="switchBool('showSuccessAlert')">×</button> 
+        </div>
+</div>
+<div ng-show="message.success==false">
+		<div class="alert alert-danger" ng-show="showSuccessAlert" >
+		 <strong>{{message.message}}</strong>
+         <button type="button" class="close" data-ng-click="switchBool('showSuccessAlert')">×</button> 
+        </div>
+</div>
+<div class="input-group">
+	<div class="alertDiv"></div>
+	 	 <input type="text" class="form-control" ng-change="onChangeGenre()" ng-model="searchString" aria-describedby="basic-addon1">
+ 	 	<br/><br/>
+ 	 <button type="button" ng-click="showAddGenre()" class="btn btn-success btn-sm">Add Genre</button>
+</div>
+<nav aria-label="Page navigation">
+  <ul id="paginationList" class="pagination" >
+	 <li  ng-repeat= "n in getNumber(number) track by $index"><a ng-click=goToPage($index+1,searchString);highlight($index)>{{$index+1}}</a></li>
+  </ul>
+</nav> 
+ 
+<div class="panel panel-default">
+		<div class="panel-heading">List of Genres</div>
+		
+			<table id="tblAuthor" class="table">
+			<thead>
+			<tr>
+				<th>Genre Id</th>
+				<th>Genre Title</th>
+				<th>Genre Publisher</th>
+				<th>Genre Authors</th>
+				<th>Genre Genres</th>
+				<th>Edit</th>
+				<th>Delete</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="b in genresList">
+					<td>{{$index+1}}</td>
+					<td>{{b.title}}</td>
+					<td>{{b.publisher.name}}</td>
+					<td>
+						<table>
+							<tr ng-repeat="a in b.authorList">
+							<td>{{a.name}}</td>	
+						</table>
+					</td>
+					<td>
+						<table>
+							<tr ng-repeat="g in b.genresList">
+							<td>{{g.name}}</td>	
+						</table>
+					</td>
+					<td><button type="button" ng-click="showEditGenre(b.id)" data-toggle="modal" class="btn btn-success btn-sm btnEdit">Edit</button></td>
+					<td><button type="button" ng-click="showDeleteGenre(b.id)" data-toggle="modal" data-toggle="modal" data-target="#deleteModal" class="btn btn-danger btn-sm">Delete</button></td>
+			</tbody>
+		</table>
+</div>
+
+<div modal="addGenreModal" id="addModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="closeAddGenre()">&times;</button>
+        <h4 class="modal-title">Add Genre</h4>
+      </div>
+      <div class="modal-body">
+       	<input type="text" value="{{author.name}}"  placeholder="Enter Genre Name" ng-model="newName"  id="newName" class="form-control" name="newName"><br/>
+     	<label>Select the author</label>
+     	<div style="border:1px solid #ccc"> <multiple-autocomplete  ng-model="selAuthorList" after-select-item="afterSelectItem" object-property="name" suggestions-arr="authorList">
+     	</multiple-autocomplete></div>
+     	<br/>
+     	<label>Select the Publisher</label><br/>
+     	<div style="border:1px solid #ccc"><select ng-model="selPubList"  class="form-control" >
+			<option ng-repeat="x in pubList" value="{{x.id}}">{{x.name}}</option>
+		</select></div>
+		<br/>
+     	<label>Select the genre</label>
+     	<div style="border:1px solid #ccc"><multiple-autocomplete ng-model="selGenresList" object-property="name" suggestions-arr="genresList"></multiple-autocomplete></div>     	
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnUpdateAuthor" ng-click="addGenre()" class="btn btn-default" >Update</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="closeEditAuthor()">Close</button><br/>
+        <span style="float:left;visibility:hidden" class="label label-success"></span>
+         <span style="float:left;visibility:hidden" class="label label-danger"></span>
+      </div>
+    </div>
+  	
+  </div>
+</div>
+
+
+<div modal="editGenreModal" id="editModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="closeEditGenre()">&times;</button>
+        <h4 class="modal-title">Update Author</h4>
+      </div>
+      <div class="modal-body">
+       	<input type="text" value="{{genre.title}}" ng-model="genre.title"  id="newTitle" 
+       	class="form-control" name="newTitle"><br/>
+     	<label>Select the author</label>
+     	<div style="border:1px solid #ccc"> 
+     	<multiple-autocomplete class="ng-pristine ng-untouched ng-valid ng-isolate-scope"  ng-model="genre.authorList" 
+     	object-property="name" suggestions-arr="authorList">
+     	</multiple-autocomplete></div>
+     	<br/>
+     	<label>Select the Publisher</label>
+     	<div style="border:1px solid #ccc">
+     	<select 
+     	class="form-control" ng-model="genre.publisher.id" ng-options="pub.id as pub.name for pub in pubList"> </select>
+     	</div><br/>
+     	<label>Select the genre</label>
+     	<div style="border:1px solid #ccc"><multiple-autocomplete ng-model="genre.genresList" object-property="name" suggestions-arr="genresList"></multiple-autocomplete></div>     	
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnUpdateAuthor" ng-click="updateGenre()" class="btn btn-default" >Update</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="closeEditGenre()">Close</button><br/>
+        <span style="float:left;visibility:hidden" class="label label-success"></span>
+         <span style="float:left;visibility:hidden" class="label label-danger"></span>
+      </div>
+    </div>
+  	
+  </div>
+</div>
+
+<div modal="deleteGenreModal" class="modal fade" role="dialog">
+  	 <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="closeDeleteGenre()">&times;</button>
+        <h4 class="modal-title">Are you sure you want to delete "{{genre.name}}" ?</h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnDeleteAuthor" ng-click="deleteGenre()" class="btn btn-default" >Delete</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="closeDeleteGenre()">Close</button><br/>
+        <span style="float:left;visibility:hidden" class="label label-success"></span>
+         <span style="float:left;visibility:hidden" class="label label-danger"></span>
+      </div>
+    </div>
+  	
+  </div>
+</div>
+
+</div>
+
+

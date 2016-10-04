@@ -1,0 +1,24 @@
+
+<div ng-controller="testCtrl as test1" >
+
+<md-input-container>
+  <label>Color</label>
+  <h1>{{test1.var1+test1.var2+test1.var3+test1.var4}}</h1>
+  <input type="text" ng-model="color" required md-maxlength="10">
+  <button ng-click="test1.showToast1()"></button>
+  </md-input-container>
+  <canvas class="chart chart-line" chart-data="data" chart-labels="labels" 
+    chart-series="series" chart-click="onClick"></canvas> 
+  
+  
+  <div>
+  
+  <canvas ng-show="1==2" class="chart chart-line" chart-data="data" chart-labels="labels" 
+    chart-series="series" chart-click="onChartClick"></canvas> 
+
+  <md-button ng-click="test1.showToast1()">
+    Open a Toast!
+  </md-button>
+</div>
+
+</div>

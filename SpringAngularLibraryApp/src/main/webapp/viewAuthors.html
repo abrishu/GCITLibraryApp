@@ -1,0 +1,87 @@
+<div ng-controller="authorController">
+<div ng-if="message.success">
+		<div class="alert alert-success" ng-show="showSuccessAlert" >
+		 <strong>{{message.message}}</strong>
+         <button type="button" class="close" data-ng-click="switchBool('showSuccessAlert')">×</button> 
+        </div>
+</div>
+<div ng-if="message.success==false">
+		<div class="alert alert-danger" ng-show="showSuccessAlert" >
+		 <strong>{{message.message}}</strong>
+         <button type="button" class="close" data-ng-click="switchBool('showSuccessAlert')">×</button> 
+        </div>
+</div>
+<div class="input-group">
+	<div class="alertDiv"></div>
+	 	 <input type="text" class="form-control" ng-change="onChangeAuthor()" ng-model="searchString" aria-describedby="basic-addon1">
+ 	 	<br/><br/>
+</div>
+<nav aria-label="Page navigation">
+  <ul id="paginationList" class="pagination" >
+	 <li  ng-repeat= "n in getNumber(number) track by $index"><a ng-click=goToPage($index+1);highlight($index)>{{$index+1}}</a></li>
+  </ul>
+</nav> 
+ 
+<div class="panel panel-default">
+		<div class="panel-heading">List of Authors</div>
+			<table id="tblAuthor" class="table">
+			<thead>
+			<tr>
+				<th>Author Id</th>
+				<th>Author Name</th>
+				<th>Edit</th>
+				<th>Delete</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr ng-style="" ng-repeat="a in authorList">
+					<td>{{$index + 1}}</td>
+					<td>{{a.name}}</td>
+					<td><button type="button" ng-click="showEditAuthor(a.id)" id="btnEdit" class="btn btn-success btn-sm btnEdit">Edit</button></td>
+					<td><button type="button" ng-click="showDeleteAuthor(a.id)" data-toggle="modal" data-target="#deleteModal" class="btn btn-danger btn-sm">Delete</button></td>
+			</tbody>
+		</table>
+</div>
+<pre>{{authors || json}}</pre>
+
+
+<div modal="editAuthorModal" id="editModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="closeEditAuthor()">&times;</button>
+        <h4 class="modal-title">Update Author</h4>
+      </div>
+      <div class="modal-body">
+       	<input type="text"   placeholder="Enter Author's Name" ng-model="author.name"  id="newName" class="form-control" name="newName"><br/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnUpdateAuthor" ng-click="updateAuthor()" class="btn btn-default" >Update</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="closeEditAuthor()">Close</button><br/>
+        <span style="float:left;visibility:hidden" class="label label-success"></span>
+         <span style="float:left;visibility:hidden" class="label label-danger"></span>
+      </div>
+    </div>
+  	
+  </div>
+</div>
+
+<div modal="deleteAuthorModal" class="modal fade" role="dialog">
+  	 <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="closeDeleteAuthor()">&times;</button>
+        <h4 class="modal-title">Are you sure you want to delete "{{author.name}}" ?</h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnDeleteAuthor" ng-click="deleteAuthor()" class="btn btn-default" >Delete</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="closeDeleteAuthor()">Close</button><br/>
+        <span style="float:left;visibility:hidden" class="label label-success"></span>
+         <span style="float:left;visibility:hidden" class="label label-danger"></span>
+      </div>
+    </div>
+  	
+  </div>
+</div>
+
+</div>

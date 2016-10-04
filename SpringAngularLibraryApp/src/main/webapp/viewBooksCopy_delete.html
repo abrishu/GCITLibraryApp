@@ -1,0 +1,37 @@
+<html>
+<head>
+<style>
+
+.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
+    border: none;
+}
+.table{
+width: 200px;
+ height: 400px;
+ overflow: auto;
+}
+
+</style>
+<title> Get Books</title>
+</head>
+<body>
+<h3>No of Books :"${bookList.size()}"</h3>
+<div id="viewBooks">
+	<table class="table" >
+	<c:forEach items="${bookList}" var="element">
+	  <tr>
+	    	<td>${element.id}</td>
+	     	<td>${element.title}</td>
+	     	<td>
+	     		<table  style="margin-bottom:0px" class="table table-borderless">
+				      <c:forEach items="${element.authorList}" var="author">
+				      	<tr><td style="padding-top:0px;padding-bottom:0px">${author.name}</td></tr>
+				      </c:forEach>
+		     	</table>
+	      	</td>
+	  </tr>
+	</c:forEach>
+	</table>
+</div>
+</body>
+</html>

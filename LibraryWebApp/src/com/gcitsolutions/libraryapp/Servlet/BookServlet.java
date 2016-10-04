@@ -159,7 +159,7 @@ public class BookServlet extends HttpServlet {
 
 			case "/displayBookDetails": {
 				getAllTheBooks(request);
-				rd = getServletContext().getRequestDispatcher("/displayBooks.jsp");
+				rd = getServletContext().getRequestDispatcher("/viewBooksCopy.jsp");
 				break;
 			}
 
